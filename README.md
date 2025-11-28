@@ -22,6 +22,10 @@ Ao cruzar o que o parlamentar diz com o que ele vota, buscamos revelar padrões 
 - Avanço em transparência pública ao fornecer um caminho para ferramentas que explicam legislação em linguagem simples;
 - Reforço da participação democrática ao tornar documentos complexos mais acessíveis.
 
+---
+
+## Execução
+
 --- 
 
 ## Visão Técnica do Projeto
