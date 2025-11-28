@@ -89,5 +89,4 @@ Ele combina:
 
 **Fase 7 — Exportação Profissional**
 
-* Exportação para PDF, Markdown, CSV e JSON
-* Preparação para dashboards (Power BI, Superset etc.)
+* Exportação para PDF e JSON.
