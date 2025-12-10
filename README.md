@@ -1,92 +1,271 @@
-# Projeto Democracia Aberta
+# Democracia Aberta: Sistema Multiagente para Análise de Discursos, Propostas Legislativas e Coerência Política
 
-Equipe: Camile Alheiro, Maria Gabrielly A. Santana e Thiago Ribeiro
+Camile Alheiro, Maria Gabrielly e Thiago Ribeiro.
 
-Este projeto investiga como discursos, textos de proposições e registros de voto podem ser combinados para medir a coerência ideológica e comportamental dos deputados federais. A proposta preenche uma lacuna importante na literatura: a maioria dos estudos foca apenas em dados estruturados, enquanto aqui integramos conteúdo textual complexo usando técnicas modernas de Processamento de Linguagem Natural (PLN) e modelagem de tópicos.
+### Usando **CrewAI + Ollama (Llama 3)**
 
-Ao cruzar o que o parlamentar diz com o que ele vota, buscamos revelar padrões de consistência (ou divergência) que hoje não são visíveis ao cidadão comum. Isso reforça a transparência e permite novas formas de interpretação do comportamento legislativo.
+Este projeto implementa um **pipeline multiagente** capaz de:
 
-## Objetivos do Projeto
-- Analisar a coerência entre retórica e comportamento de voto de deputados federais;
-- Utilizar técnicas de NLP e LLM para análise dos dados;
-- Criar uma metodologia replicável para estudos de comportamento legislativo baseados em texto;
-- Contribuir para maior transparência e compreensão do processo legislativo por parte do cidadão comum.
+1. **Analisar discursos políticos**
+2. **Simplificar e auditar a análise**
+3. **Analisar propostas legislativas**
+4. **Avaliar coerência entre discursos e proposições oficiais**
 
---- 
-
-## Contribuições
-- Integração entre dados textuais completos e registros de votação da Câmara.
-- Abordagem que permite identificar a divergência entre discurso e voto;
-- Aplicação de técnicas modernas de PLN e LLM para análise legislativa em português;
-- Metodologia que complementa estudos anteriores focados em Random Forest, redes complexas e modelos analíticos;
-- Avanço em transparência pública ao fornecer um caminho para ferramentas que explicam legislação em linguagem simples;
-- Reforço da participação democrática ao tornar documentos complexos mais acessíveis.
+A arquitetura usa **CrewAI** com agentes especializados e um modelo **local Llama 3 via Ollama**, garantindo desempenho e privacidade.
 
 ---
 
-## Execução
+## 🚀 Tecnologias
 
---- 
+* **Python 3.10+**
+* **CrewAI**
+* **Ollama** (executando `llama3`)
+* **Modelos locais para LLM**
+* Estrutura modular com agentes independentes
 
-## Visão Técnica do Projeto
+---
 
-Este projeto utiliza **IA multiagente** e **Modelos de Linguagem rodando localmente via Ollama** para analisar discursos de parlamentares, simplificar linguagem, auditar fidelidade e, em fases futuras, avaliar a **coerência entre discurso e prática legislativa**.
+## 🏗️ Arquitetura dos Agentes
 
-Ele combina:
+### 🔍 1. `analyzer_agent`
 
-* Análise linguística
-* Simplificação acessível
-* Auditoria automática
-* RAG (memória vetorial)
-* Análise legislativa
-* Medição de coerência política
-* Pipeline sequencial com múltiplos agentes
+Analisa profundamente um discurso, identificando temas, padrões e objetivos.
 
-### Funcionalidades Atuais (MVP)
+### ✏️ 2. `simplifier_agent`
 
-* Coleta automática de discursos da API da Câmara dos Deputados
-* Análise profunda dos discursos por agente especializado
-* Simplificação para linguagem acessível
-* Auditoria da fidelidade entre discurso original e simplificado
-* Geração de relatório final consolidado
-* Execução local usando modelos LLM via **Ollama**
+Transforma a análise em uma versão simples e acessível, em linguagem popular.
 
-### Roadmap 
+### 🕵️ 3. `auditor_agent`
 
-**Fase 1 — MVP**
+Garante fidelidade da simplificação ao conteúdo original.
 
-* Pipeline multiagente com análise, simplificação, auditoria e consolidação
-* Coleta de discursos via API
-* Execução local via Ollama
+### 🧩 4. `coordinator_agent`
 
-**Fase 2 — Memória Longa (RAG)**
+Une análise + simplificação + auditoria em um relatório final.
 
-* Criação de um banco vetorial (ChromaDB ou similar)
-* Armazenamento de discursos, proposições, votações e metadados
-* Criação de um agente especializado em consultas RAG
+### 🗂️ 5. `proposal_analyzer_agent`
 
-**Fase 3 — Análise de Proposições Legislativas**
+Analisa proposições oficiais (ex.: PLS, PL, PEC…).
 
-* Coleta automática de proposições e projetos de lei
-* Classificação temática das proposições
-* Enriquecimento da memória vetorial com dados legislativos
+### ⚖️ 6. `coherence_checker_agent`
 
-**Fase 4 — Índice de Coerência Política**
+Compara:
 
-* Cálculo de similaridade entre temas dos discursos e das proposições
-* Identificação de conexões, contradições e inconsistências
-* Geração de score de coerência entre fala e prática legislativa
+* análise dos discursos
+* análise das propostas
 
-**Fase 5 — Agente de Coerência Política**
+E avalia **coerência política**.
 
-* Agente especializado em cruzar discursos, proposições e votações
-* Relatório analítico explicando onde o político é coerente ou contraditório
+---
 
-**Fase 6 — Pipeline Integrado Completo**
+## 🔧 Configuração do LLM (Ollama)
 
-* Pipeline unificado combinando análise, RAG e coerência
-* Relatório final com avaliação temática, coerência e resumo simplificado
+```python
+from crewai import LLM
 
-**Fase 7 — Exportação Profissional**
+llm = LLM(
+    model="ollama/llama3",
+    base_url="http://localhost:11434",  
+)
+```
 
-* Exportação para PDF e JSON.
+---
+
+## 📌 Definição das Tasks
+
+### **1) Análise do discurso**
+
+```python
+analysis_task = Task(
+    description=(
+        "Analise profundamente o documento abaixo. "
+        "Identifique tópicos centrais, temas recorrentes, aspectos sociais, "
+        "pontos políticos e objetivos principais.\n\n"
+        "DOCUMENTO:\n{documento}"
+    ),
+    expected_output="Um relatório detalhado com tópicos e achados relevantes.",
+    agent=analyzer_agent,
+    output_key="analise"
+)
+```
+
+### **2) Simplificação**
+
+```python
+simplification_task = Task(
+    description=(
+        "Com base na análise anterior, reescreva o conteúdo em linguagem "
+        "extremamente simples, popular e acessível a qualquer pessoa. "
+        "Evite termos técnicos."
+    ),
+    expected_output="Um texto simplificado e fácil de entender.",
+    agent=simplifier_agent,
+    output_key="simplificado"
+)
+```
+
+### **3) Auditoria**
+
+```python
+audit_task = Task(
+    description="Verifique se o texto simplificado mantém fidelidade ao conteúdo original.",
+    expected_output="Texto auditado e fiel.",
+    agent=auditor_agent,
+    output_key="auditado"
+)
+```
+
+### **4) Relatório Final**
+
+```python
+final_task = Task(
+    description="Combine análise, simplificação e auditoria em um relatório final.",
+    expected_output="Relatório final consolidado.",
+    agent=coordinator_agent,
+    output_key="resultado_final"
+)
+```
+
+### **5) Análise de Propostas**
+
+```python
+proposal_analysis_task = Task(
+    description=(
+        "Analise o conjunto de propostas legislativas do político. "
+        "Identifique padrões, áreas de foco, e os principais temas propostos.\n\n"
+        "PROPOSTAS:\n{propostas}"
+    ),
+    expected_output="Um relatório conciso sobre os temas e foco das propostas.",
+    agent=proposal_analyzer_agent,
+    output_key="analise_propostas"
+)
+```
+
+### **6) Verificação de Coerência**
+
+```python
+coherence_check_task = Task(
+    description=(
+        "Compare a análise dos Discursos (disponível no input: '{analise_discursos}') "
+        "com a análise das Propostas (disponível no contexto da task anterior). "
+        "Avalie se há coerência entre o que o político discursa e o que ele propõe formalmente. "
+        "Sinalize áreas de conflito ou de alinhamento."
+    ),
+    expected_output=(
+        "Um relatório de coerência detalhado e conclusivo "
+        "(Coerente/Incoerente/Parcialmente Coerente)."
+    ),
+    agent=coherence_checker_agent,
+    output_key="verificacao_coerencia"
+)
+```
+
+---
+
+## ▶️ Pipeline Completo
+
+O pipeline segue a seguinte ordem:
+
+1. `analysis_task`
+2. `simplification_task`
+3. `audit_task`
+4. `final_task`
+5. `proposal_analysis_task`
+6. `coherence_check_task`
+
+---
+
+## 🗃️ Estrutura Recomendada do Projeto
+
+```
+/project
+│
+├── agents/
+│   ├── analyzer_agent.py
+│   ├── simplifier_agent.py
+│   ├── auditor_agent.py
+│   ├── coordinator_agent.py
+│   ├── proposal_analyzer_agent.py
+│   └── coherence_checker_agent.py
+│
+├── tasks.py
+├── main.py
+├── README.md
+└── requirements.txt
+```
+
+---
+
+## 📦 Instalação
+
+### 1) Instalar dependências
+
+```bash
+pip install crewai python-dotenv
+```
+
+### 2) Instalar e rodar o Ollama
+
+```bash
+curl -fsSL https://ollama.com/install.sh | sh
+ollama pull llama3
+ollama serve
+```
+
+### 3) Executar o pipeline
+
+```bash
+python main.py
+```
+
+---
+
+## 🧪 Exemplo de Uso
+
+```python
+resultado = crew.run(
+    {
+        "documento": texto_dos_discursos,
+        "propostas": json_de_proposicoes,
+        "analise_discursos": analise_pelo_primeiro_agente
+    }
+)
+
+print(resultado["verificacao_coerencia"])
+```
+
+Aqui está a **seção pronta para colar no README.md**, já formatada, limpa e elegante:
+
+---
+
+## 🔬 Experimentos com Modelos Ollama
+
+Durante o desenvolvimento foram testados três variantes do Llama executadas localmente via **Ollama**. Os resultados práticos foram:
+
+### 🔹 **llama3:8b**
+
+* Mais rápido
+* Mais leve
+* Muito bom para tarefas de **simplificação**
+* **Resultado:** adequado, porém menos profundo nas análises complexas
+
+---
+
+### 🔹 **llama3:latest**
+
+* Melhor equilíbrio entre velocidade e profundidade
+* Custo computacional moderado
+* Respostas mais consistentes que a versão **8b**
+* **Resultado:** modelo com melhor custo × qualidade
+
+---
+
+### 🔹 **llama3.1:latest**
+
+* Versão mais atualizada
+* Em alguns testes apresentou maior estabilidade
+* Entretanto, para este projeto específico, ofereceu **menos precisão analítica**
+* **Resultado:** funcional, mas **não foi o ideal** para análise detalhada de discursos e propostas
+
+---
+
