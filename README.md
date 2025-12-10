@@ -233,9 +233,6 @@ resultado = crew.run(
 
 print(resultado["verificacao_coerencia"])
 ```
-
-Aqui está a **seção pronta para colar no README.md**, já formatada, limpa e elegante:
-
 ---
 
 ## 🔬 Experimentos com Modelos Ollama
