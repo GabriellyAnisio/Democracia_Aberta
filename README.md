@@ -246,7 +246,7 @@ Durante o desenvolvimento foram testados três variantes do Llama executadas loc
 
 * Mais rápido
 * Mais leve
-* Muito bom para tarefas de **simplificação**
+* Muito bom para tarefas de **coerência**
 * **Resultado:** adequado, porém menos profundo nas análises complexas
 
 ---
